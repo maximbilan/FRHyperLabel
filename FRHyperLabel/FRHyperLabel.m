@@ -19,7 +19,7 @@
 
 @implementation FRHyperLabel
 
-static CGFloat highLightAnimationTime = 0.15;
+static CGFloat highLightAnimationTime = 0.45;
 static UIColor *FRHyperLabelLinkColorDefault;
 static UIColor *FRHyperLabelLinkColorHighlight;
 
@@ -130,9 +130,11 @@ static UIColor *FRHyperLabelLinkColorHighlight;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	[UIView transitionWithView:self duration:highLightAnimationTime options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-		self.attributedText = self.backupAttributedText;
-	} completion:nil];
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(highLightAnimationTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+		[UIView transitionWithView:self duration:highLightAnimationTime options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+			self.attributedText = self.backupAttributedText;
+		} completion:nil];
+	});
 	
 	for (UITouch *touch in touches) {
 		NSValue *rangeValue = [self attributedTextRangeForPoint:[touch locationInView:self]];
